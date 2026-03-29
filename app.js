@@ -216,6 +216,8 @@
   firebase.initializeApp(FIREBASE_CONFIG);
   const db = firebase.database();
   const checksRef = db.ref('clan-checklist/checks');
+  const presenceRef = db.ref('clan-checklist/presence');
+  const connectedRef = db.ref('.info/connected');
 
   // --- DOM ---
   const authScreen = document.getElementById('auth-screen');
@@ -231,6 +233,7 @@
   const searchInput = document.getElementById('search-input');
   const checkedCountEl = document.getElementById('checked-count');
   const totalCountEl = document.getElementById('total-count');
+  const onlineCountEl = document.getElementById('online-count');
   const progressText = document.getElementById('progress-text');
   const progressFill = document.getElementById('progress-fill');
 
@@ -256,6 +259,29 @@
     currentUserEl.textContent = currentUser;
     renderList();
     listenChecks();
+    setupPresence();
+    listenOnline();
+  }
+
+  // --- Онлайн-присутствие ---
+  let myPresenceRef = null;
+
+  function setupPresence() {
+    connectedRef.on('value', snap => {
+      if (snap.val() === true) {
+        myPresenceRef = presenceRef.push();
+        myPresenceRef.set({ user: currentUser, at: Date.now() });
+        myPresenceRef.onDisconnect().remove();
+      }
+    });
+  }
+
+  function listenOnline() {
+    presenceRef.on('value', snap => {
+      const data = snap.val();
+      const count = data ? Object.keys(data).length : 0;
+      onlineCountEl.textContent = count;
+    });
   }
 
   function login() {
@@ -269,6 +295,7 @@
   loginBtn.addEventListener('click', login);
   nickInput.addEventListener('keydown', e => { if (e.key === 'Enter') login(); });
   logoutBtn.addEventListener('click', () => {
+    if (myPresenceRef) myPresenceRef.remove();
     currentUser = '';
     localStorage.removeItem('clan_checklist_user');
     showAuth();

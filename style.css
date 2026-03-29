@@ -196,6 +196,33 @@ header h1 {
     gap: 12px;
 }
 
+.online-badge {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    color: var(--green);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 10px;
+    background: var(--green-dim);
+    border-radius: 12px;
+    border: 1px solid rgba(74, 158, 92, 0.2);
+}
+
+.online-dot {
+    width: 7px;
+    height: 7px;
+    background: var(--green);
+    border-radius: 50%;
+    display: inline-block;
+    animation: pulse-dot 2s infinite;
+}
+
+@keyframes pulse-dot {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+}
+
 #current-user {
     color: var(--gold-light);
     font-weight: 600;
