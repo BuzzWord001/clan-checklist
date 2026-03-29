@@ -19,8 +19,8 @@
     --bg: #0a0e14;
     --text: #d8e0ec;
     --text-dim: #7a8a9e;
-    --panel: rgba(10, 14, 22, 0.4);
-    --panel-solid: rgba(10, 14, 22, 0.5);
+    --panel: rgba(10, 14, 22, 0.28);
+    --panel-solid: rgba(10, 14, 22, 0.4);
 }
 
 html, body {
@@ -41,7 +41,7 @@ body::before {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: url('bg.jpg') center/cover no-repeat;
-    opacity: 0.35;
+    opacity: 0.45;
     z-index: -1;
 }
 
@@ -112,8 +112,8 @@ body::before {
 }
 
 .auth-box input:focus {
-    border-color: var(--gold);
-    box-shadow: 0 0 12px var(--gold-glow);
+    border-color: var(--sky);
+    box-shadow: 0 0 12px var(--sky-glow);
 }
 
 .auth-box button {
@@ -288,7 +288,7 @@ header h1 {
 .columns {
     display: flex;
     gap: 10px;
-    padding: 10px 20px 10px;
+    padding: 20px 20px 10px;
     flex: 1 1 0;
     min-height: 0;
     overflow: hidden;
@@ -366,7 +366,7 @@ header h1 {
 }
 
 #clan-table-left thead, #clan-table-right thead {
-    background: rgba(10, 14, 22, 0.85);
+    background: rgba(10, 14, 22, 0.5);
     position: sticky;
     top: 0;
     z-index: 10;
