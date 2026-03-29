@@ -409,15 +409,18 @@
   }
 
   // --- Слушаем Firebase ---
+  let firebaseConnected = false;
+
   function listenChecks() {
     checksRef.on('value', snap => {
-      const remote = snap.val() || {};
-      // Мержим: remote данные поверх локальных
-      checksData = Object.assign({}, checksData, remote);
+      firebaseConnected = true;
+      // Firebase — единственный источник правды
+      checksData = snap.val() || {};
       saveLocal();
       renderList(searchInput.value);
     }, () => {
       // Firebase недоступен — работаем локально
+      firebaseConnected = false;
       console.log('Firebase offline, using local data');
     });
   }
