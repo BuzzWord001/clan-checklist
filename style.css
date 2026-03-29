@@ -19,8 +19,8 @@
     --bg: #0a0e14;
     --text: #d8e0ec;
     --text-dim: #7a8a9e;
-    --panel: rgba(10, 14, 22, 0.28);
-    --panel-solid: rgba(10, 14, 22, 0.4);
+    --panel: rgba(10, 14, 22, 0.15);
+    --panel-solid: rgba(10, 14, 22, 0.25);
 }
 
 html, body {
@@ -41,7 +41,7 @@ body::before {
     position: fixed;
     top: 0; left: 0; right: 0; bottom: 0;
     background: url('bg.jpg') center/cover no-repeat;
-    opacity: 0.45;
+    opacity: 0.6;
     z-index: -1;
 }
 
@@ -62,7 +62,7 @@ body::before {
 }
 
 .auth-box {
-    background: rgba(10, 14, 22, 0.8);
+    background: rgba(10, 14, 22, 0.5);
     border: 1px solid var(--sky-dark);
     border-radius: 16px;
     padding: 44px 48px;
@@ -367,7 +367,7 @@ header h1 {
 }
 
 #clan-table-left thead, #clan-table-right thead {
-    background: rgba(10, 14, 22, 0.5);
+    background: rgba(10, 14, 22, 0.3);
     position: sticky;
     top: 0;
     z-index: 10;
