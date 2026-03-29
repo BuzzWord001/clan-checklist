@@ -235,6 +235,12 @@
   let currentUser = localStorage.getItem('clan_checklist_user') || '';
   let checksData = {};
 
+  // Загрузить локальные данные сразу
+  try {
+    const saved = localStorage.getItem('clan_checklist_data');
+    if (saved) checksData = JSON.parse(saved);
+  } catch(e) {}
+
   // --- Авторизация ---
   function showAuth() {
     authScreen.style.display = 'flex';
@@ -324,18 +330,50 @@
 
   // --- Toggle галочки ---
   function toggleCheck(key, nick, checked) {
+    // Обновляем UI сразу (не ждём Firebase)
     if (checked) {
-      checksRef.child(key).set({ checked: true, by: currentUser, at: Date.now() });
+      checksData[key] = { checked: true, by: currentUser, at: Date.now() };
     } else {
-      checksRef.child(key).remove();
+      delete checksData[key];
     }
+    renderList(searchInput.value);
+    saveLocal();
+
+    // Синхронизируем с Firebase (если доступен)
+    try {
+      if (checked) {
+        checksRef.child(key).set(checksData[key]);
+      } else {
+        checksRef.child(key).remove();
+      }
+    } catch(e) {}
+  }
+
+  // --- Локальное хранение (fallback) ---
+  function saveLocal() {
+    try {
+      localStorage.setItem('clan_checklist_data', JSON.stringify(checksData));
+    } catch(e) {}
+  }
+
+  function loadLocal() {
+    try {
+      const saved = localStorage.getItem('clan_checklist_data');
+      if (saved) checksData = JSON.parse(saved);
+    } catch(e) {}
   }
 
   // --- Слушаем Firebase ---
   function listenChecks() {
     checksRef.on('value', snap => {
-      checksData = snap.val() || {};
+      const remote = snap.val() || {};
+      // Мержим: remote данные поверх локальных
+      checksData = Object.assign({}, checksData, remote);
+      saveLocal();
       renderList(searchInput.value);
+    }, () => {
+      // Firebase недоступен — работаем локально
+      console.log('Firebase offline, using local data');
     });
   }
 
