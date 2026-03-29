@@ -334,8 +334,6 @@ header h1 {
 
 /* --- Скролл таблицы --- */
 .table-container {
-    max-height: calc(100vh - 240px);
-    overflow-y: auto;
     overflow-x: hidden;
     scrollbar-width: thin;
     scrollbar-color: var(--sky-dark) transparent;
