@@ -310,7 +310,16 @@
     const f = (filter || '').toLowerCase();
     let leftCount = 0, rightCount = 0;
 
-    CLAN_LIST.forEach(([nick, title], i) => {
+    // Сортировка по титулу (алфавит), пустые титулы в конец
+    const sorted = CLAN_LIST.map(([nick, title], i) => ({ nick, title, i }))
+      .sort((a, b) => {
+        if (!a.title && !b.title) return 0;
+        if (!a.title) return 1;
+        if (!b.title) return -1;
+        return a.title.localeCompare(b.title, 'ru');
+      });
+
+    sorted.forEach(({ nick, title, i }) => {
       if (f && !nick.toLowerCase().includes(f) && !title.toLowerCase().includes(f)) return;
 
       const key = safeKey(nick, i);
