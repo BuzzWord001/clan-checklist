@@ -24,7 +24,6 @@
     ["1Katar1", ""],
     ["End76", "Лёша_J"],
     ["Череп@шка", "Катя_J"],
-    ["дочь_луны", "Лу"],
     ["Мелодька", "Марина_J"],
     ["~Шлюпка~", "Настя"],
     ["~АдаНет~", "Ада"],
@@ -225,7 +224,10 @@
   const loginBtn = document.getElementById('login-btn');
   const logoutBtn = document.getElementById('logout-btn');
   const currentUserEl = document.getElementById('current-user');
-  const clanList = document.getElementById('clan-list');
+  const clanListLeft = document.getElementById('clan-list-left');
+  const clanListRight = document.getElementById('clan-list-right');
+  const leftCountEl = document.getElementById('left-count');
+  const rightCountEl = document.getElementById('right-count');
   const searchInput = document.getElementById('search-input');
   const checkedCountEl = document.getElementById('checked-count');
   const totalCountEl = document.getElementById('total-count');
@@ -280,43 +282,59 @@
     return key + '__' + index;
   }
 
-  // --- Рендер списка ---
+  // --- Рендер списка (две колонки) ---
   function renderList(filter) {
-    clanList.innerHTML = '';
+    clanListLeft.innerHTML = '';
+    clanListRight.innerHTML = '';
     const f = (filter || '').toLowerCase();
-    let total = 0, checked = 0;
+    let leftCount = 0, rightCount = 0;
 
     CLAN_LIST.forEach(([nick, title], i) => {
       if (f && !nick.toLowerCase().includes(f) && !title.toLowerCase().includes(f)) return;
 
-      total++;
       const key = safeKey(nick, i);
       const info = checksData[key];
       const isChecked = info && info.checked;
-      if (isChecked) checked++;
 
       const tr = document.createElement('tr');
-      if (isChecked) tr.classList.add('checked-row');
 
-      tr.innerHTML = `
-        <td class="check-cell">
-          <input type="checkbox" data-key="${key}" data-nick="${nick}" ${isChecked ? 'checked' : ''}>
-        </td>
-        <td class="col-nick">${escHtml(nick)}</td>
-        <td class="col-title">${escHtml(title)}</td>
-        <td class="col-who">${isChecked && info.by ? escHtml(info.by) : ''}</td>
-      `;
-
-      const cb = tr.querySelector('input[type="checkbox"]');
-      cb.addEventListener('change', () => toggleCheck(key, nick, cb.checked));
-
-      clanList.appendChild(tr);
+      if (isChecked) {
+        // Правая колонка — найдены
+        tr.classList.add('checked-row');
+        tr.innerHTML = `
+          <td class="check-cell">
+            <input type="checkbox" checked>
+          </td>
+          <td class="col-nick">${escHtml(nick)}</td>
+          <td class="col-title">${escHtml(title)}</td>
+          <td class="col-who">${info.by ? escHtml(info.by) : ''}</td>
+        `;
+        const cb = tr.querySelector('input[type="checkbox"]');
+        cb.addEventListener('change', () => toggleCheck(key, nick, false));
+        clanListRight.appendChild(tr);
+        rightCount++;
+      } else {
+        // Левая колонка — ищем
+        tr.innerHTML = `
+          <td class="check-cell">
+            <input type="checkbox">
+          </td>
+          <td class="col-nick">${escHtml(nick)}</td>
+          <td class="col-title">${escHtml(title)}</td>
+        `;
+        const cb = tr.querySelector('input[type="checkbox"]');
+        cb.addEventListener('change', () => toggleCheck(key, nick, true));
+        clanListLeft.appendChild(tr);
+        leftCount++;
+      }
     });
 
     const totalNum = CLAN_LIST.length;
-    const checkedNum = Object.values(checksData).filter(v => v && v.checked).length;
+    const checkedNum = rightCount;
     totalCountEl.textContent = totalNum;
     checkedCountEl.textContent = checkedNum;
+    leftCountEl.textContent = `(${leftCount})`;
+    rightCountEl.textContent = `(${rightCount})`;
     const pct = totalNum > 0 ? (checkedNum / totalNum * 100) : 0;
     progressText.textContent = `${checkedNum} / ${totalNum}`;
     progressFill.style.width = pct + '%';
