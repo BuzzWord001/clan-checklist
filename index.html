@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SanTDeviL — Чеклист клана</title>
+    <link rel="icon" href="logo.png" type="image/png">
+    <link rel="stylesheet" href="style.css">
+    <style>body { opacity: 0; } body.ready { opacity: 1; transition: opacity 0.15s; }</style>
+</head>
+<body>
+    <!-- Авторизация -->
+    <div id="auth-screen" style="display:none">
+        <div class="auth-box">
+            <img src="logo.png" alt="SanTDeviL" class="auth-logo">
+            <h2>SanTDeviL</h2>
+            <p>Введи свой ник</p>
+            <input type="text" id="nick-input" placeholder="Ник..." maxlength="30" autocomplete="off">
+            <button id="login-btn">Войти</button>
+        </div>
+    </div>
+
+    <!-- Основная страница -->
+    <div id="main-screen" style="display:none">
+        <div class="progress-bar-container">
+            <div class="progress-bar-info">
+                <span id="progress-text">0 / 0</span>
+            </div>
+            <div class="progress-bar-track">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+        </div>
+        <header>
+            <div class="header-brand">
+                <img src="logo.png" alt="" class="header-logo">
+                <h1>SanTDeviL — Чеклист</h1>
+            </div>
+            <div class="user-info">
+                <span id="current-user"></span>
+                <button id="logout-btn">Выйти</button>
+            </div>
+        </header>
+        <div class="search-bar">
+            <input type="text" id="search-input" placeholder="Поиск по нику..." autocomplete="off">
+        </div>
+        <table id="clan-table">
+            <thead>
+                <tr>
+                    <th class="col-check">✓</th>
+                    <th class="col-nick">Ник</th>
+                    <th class="col-title">Титул</th>
+                    <th class="col-who">Кто отметил</th>
+                </tr>
+            </thead>
+            <tbody id="clan-list"></tbody>
+        </table>
+        <div class="stats">
+            Отмечено: <span id="checked-count">0</span> / <span id="total-count">0</span>
+        </div>
+    </div>
+
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
