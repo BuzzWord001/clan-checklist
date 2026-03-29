@@ -359,8 +359,9 @@
       }
     });
 
+    // Общее количество — считаем по ВСЕМ записям, не по фильтру
     const totalNum = CLAN_LIST.length;
-    const checkedNum = rightCount;
+    const checkedNum = Object.values(checksData).filter(v => v && v.checked).length;
     totalCountEl.textContent = totalNum;
     checkedCountEl.textContent = checkedNum;
     leftCountEl.textContent = `(${leftCount})`;
