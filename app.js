@@ -240,12 +240,6 @@
   let currentUser = localStorage.getItem('clan_checklist_user') || '';
   let checksData = {};
 
-  // Загрузить локальные данные сразу
-  try {
-    const saved = localStorage.getItem('clan_checklist_data');
-    if (saved) checksData = JSON.parse(saved);
-  } catch(e) {}
-
   // --- Авторизация ---
   function showAuth() {
     authScreen.style.display = 'flex';
@@ -374,8 +368,13 @@
   }
 
   // --- Toggle галочки ---
+  let ignoreNextUpdate = false;
+
   function toggleCheck(key, nick, checked) {
-    // Обновляем UI сразу (не ждём Firebase)
+    // Блокируем Firebase listener на время записи
+    ignoreNextUpdate = true;
+
+    // Обновляем UI сразу
     if (checked) {
       checksData[key] = { checked: true, by: currentUser, at: Date.now() };
     } else {
@@ -384,14 +383,17 @@
     renderList(searchInput.value);
     saveLocal();
 
-    // Синхронизируем с Firebase (если доступен)
-    try {
-      if (checked) {
-        checksRef.child(key).set(checksData[key]);
-      } else {
-        checksRef.child(key).remove();
-      }
-    } catch(e) {}
+    // Синхронизируем с Firebase
+    const promise = checked
+      ? checksRef.child(key).set(checksData[key])
+      : checksRef.child(key).remove();
+
+    promise.then(() => {
+      // Firebase записал — разрешаем обновления
+      setTimeout(() => { ignoreNextUpdate = false; }, 300);
+    }).catch(() => {
+      ignoreNextUpdate = false;
+    });
   }
 
   // --- Локальное хранение (fallback) ---
@@ -414,12 +416,13 @@
   function listenChecks() {
     checksRef.on('value', snap => {
       firebaseConnected = true;
+      // Пропускаем если идёт локальная запись
+      if (ignoreNextUpdate) return;
       // Firebase — единственный источник правды
       checksData = snap.val() || {};
       saveLocal();
       renderList(searchInput.value);
     }, () => {
-      // Firebase недоступен — работаем локально
       firebaseConnected = false;
       console.log('Firebase offline, using local data');
     });
